@@ -131,7 +131,6 @@ const nodesss = topologicalSort(data).reverse();
 const n = nodes.map((i) => {
     const x = i.split(".")[0];
     const v = outdegree[i] + indegree[i];
-    const color = c[x].color || "#000";
     return {
         id: i,
         name: i,
@@ -140,12 +139,6 @@ const n = nodes.map((i) => {
         x: (nodesss.indexOf(i) / nodesss.length) * 800,
         y: c[x].y * 600 + v * Math.random(),
         category: categories.indexOf(x),
-        itemStyle: {
-            color: color,
-            shadowColor: color,
-            shadowBlur: 5,
-        },
-        z: ["Data", "Init"].includes(x) ? 1 : 2,
     };
 });
 
@@ -190,7 +183,17 @@ function showChart() {
                     symbol: "circle",
                     data: n,
                     links: edge,
-                    categories: categories.map((i) => ({ name: i })),
+                    categories: categories.map((i) => {
+                        const color = c[i].color || "#000";
+                        return {
+                            name: i,
+                            itemStyle: {
+                                color: color,
+                                shadowColor: color,
+                                shadowBlur: 5,
+                            },
+                        };
+                    }),
                     label: {
                         show: true,
                         position: "right",
