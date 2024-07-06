@@ -26,5 +26,6 @@
     "RepresentationTheory": "表示论",
     "RingTheory": "环论",
     "SetTheory": "集合论",
-    "Topology": "拓扑学"
-  }
+    "Topology": "拓扑学",
+    "Basic": "基础"
+}

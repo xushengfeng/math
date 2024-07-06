@@ -943,33 +943,6 @@
     "Data.Fin.Fin2",
     "Init.Logic"
   ],
-  "Deprecated.Group": [
-    "Algebra.Group.Equiv.Basic",
-    "Algebra.Group.TypeTags",
-    "Algebra.Group.Units.Hom",
-    "Algebra.Ring.Hom.Defs"
-  ],
-  "Deprecated.Ring": [
-    "Deprecated.Group"
-  ],
-  "Deprecated.Subfield": [
-    "Algebra.Field.Basic",
-    "Deprecated.Subring"
-  ],
-  "Deprecated.Subgroup": [
-    "Algebra.Group.Subgroup.Basic",
-    "Deprecated.Submonoid"
-  ],
-  "Deprecated.Submonoid": [
-    "Algebra.BigOperators.Group.Finset",
-    "Algebra.Group.Submonoid.Basic",
-    "Deprecated.Group"
-  ],
-  "Deprecated.Subring": [
-    "Deprecated.Subgroup",
-    "Deprecated.Group",
-    "Algebra.Ring.Subring.Basic"
-  ],
   "Dynamics.Flow": [
     "Topology.Algebra.Group.Basic",
     "Logic.Function.Iterate"

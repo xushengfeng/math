@@ -7,7 +7,7 @@ let json = {};
 /** @type string */
 const p = fs.readdirSync(mathLibPath, { recursive: true }).filter((i) => i.endsWith(".lean"));
 
-const ignore = ["Lean", "Tactic", "Util", "Mathport", "Testing"];
+const ignore = ["Lean", "Tactic", "Util", "Mathport", "Testing", "Deprecated"];
 
 for (let i of p) {
     if (ignore.includes(i.split(/[/.]/)[0])) continue;

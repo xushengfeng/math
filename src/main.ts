@@ -12,7 +12,7 @@ document.body.append(main);
 main.style.width = "800px";
 main.style.height = "600px";
 
-var myChart = echarts.init(main);
+var myChart = echarts.init(main, "dark");
 
 import rawData from "../data/data.json?raw";
 const data = JSON.parse(rawData) as { [key: string]: string[] };
@@ -40,37 +40,34 @@ console.log(categories);
 
 const g = Object.groupBy(nodes, (i) => i.split(".")[0]);
 console.log(g);
-
-const c: { [k: string]: { x: number; y: number } } = {
-    Algebra: { x: 1, y: 0.4 },
-    Data: { x: 1, y: 0.5 },
-    RingTheory: { x: 1, y: 0.3 },
-    Order: { x: 1, y: 0.5 },
-    LinearAlgebra: { x: 1, y: 0.55 },
-    Init: { x: 0, y: 0.5 },
-    Control: { x: 1, y: 0 },
-    Logic: { x: 1, y: 0.6 },
-    Mathport: { x: 1, y: 1 },
-    NumberTheory: { x: 1, y: 0.5 },
-    GroupTheory: { x: 1, y: 0.2 },
-    SetTheory: { x: 1, y: 0.6 },
-    AlgebraicGeometry: { x: 1, y: 0.6 },
-    CategoryTheory: { x: 1, y: 0.7 },
-    Geometry: { x: 1, y: 0.65 },
-    Topology: { x: 1, y: 0.85 },
-    AlgebraicTopology: { x: 1, y: 0.8 },
-    Analysis: { x: 1, y: 0.75 },
-    MeasureTheory: { x: 1, y: 0.9 },
-    Combinatorics: { x: 1, y: 0.1 },
-    Computability: { x: 1, y: 0.65 },
-    Condensed: { x: 1, y: 0.8 },
-    Deprecated: { x: 1, y: 1 },
-    Dynamics: { x: 1, y: 1 },
-    FieldTheory: { x: 1, y: 0.2 },
-    InformationTheory: { x: 1, y: 0.1 },
-    ModelTheory: { x: 1, y: 0.35 },
-    Probability: { x: 1, y: 1 },
-    RepresentationTheory: { x: 1, y: 0.35 },
+const c: { [k: string]: { y: number; color: string } } = {
+    Algebra: { y: 0.4, color: "#ffff00" },
+    Data: { y: 0.5, color: "#404040" },
+    RingTheory: { y: 0.3, color: "#ff8000" },
+    Order: { y: 0.5, color: "#804000" },
+    LinearAlgebra: { y: 0.55, color: "#00ff00" },
+    Init: { y: 0.5, color: "#008040" },
+    Control: { y: 0, color: null }, // Assuming Control does not have a specified color
+    Logic: { y: 0.6, color: "#0080ff" },
+    NumberTheory: { y: 0.5, color: "#800000" },
+    GroupTheory: { y: 0.2, color: "#ff2040" },
+    SetTheory: { y: 0.6, color: "#ff8080" },
+    AlgebraicGeometry: { y: 0.6, color: "#6040ff" },
+    CategoryTheory: { y: 0.7, color: "#80a0ff" },
+    Geometry: { y: 0.65, color: "#ff80ff" },
+    Topology: { y: 0.85, color: "#ff00ff" },
+    AlgebraicTopology: { y: 0.8, color: "#6040ff" }, // Using the same color as AlgebraicGeometry
+    Analysis: { y: 0.75, color: "#00ffff" },
+    MeasureTheory: { y: 0.9, color: "#8000ff" },
+    Combinatorics: { y: 0.1, color: "#800000" },
+    Computability: { y: 0.65, color: "#bfff00" },
+    Condensed: { y: 0.8, color: "#ff0000" },
+    Dynamics: { y: 1, color: "#008040" },
+    FieldTheory: { y: 0.2, color: "#ffff80" },
+    InformationTheory: { y: 0.1, color: "#8000ff" },
+    ModelTheory: { y: 0.35, color: "#6040ff" },
+    Probability: { y: 1, color: "#0000ff" },
+    RepresentationTheory: { y: 0.35, color: "#ff0000" },
 };
 
 function topologicalSort(graph: { [k: string]: string[] }) {
@@ -134,14 +131,21 @@ const nodesss = topologicalSort(data).reverse();
 const n = nodes.map((i) => {
     const x = i.split(".")[0];
     const v = outdegree[i] + indegree[i];
+    const color = c[x].color || "#000";
     return {
         id: i,
         name: i,
         symbolSize: 1 * v,
         value: v,
         x: (nodesss.indexOf(i) / nodesss.length) * 800,
-        y: c[x].y * 600 + 10 * Math.random(),
+        y: c[x].y * 600 + v * Math.random(),
         category: categories.indexOf(x),
+        itemStyle: {
+            color: color,
+            shadowColor: color,
+            shadowBlur: 5,
+        },
+        z: ["Data", "Init"].includes(x) ? 1 : 2,
     };
 });
 
@@ -170,9 +174,13 @@ function showChart() {
     myChart.hideLoading();
     myChart.setOption(
         {
+            backgroundColor: "#000",
             legend: [
                 {
+                    type: "scroll",
                     data: categories,
+                    left: 0,
+                    bottom: 0,
                 },
             ],
             series: [
@@ -184,8 +192,10 @@ function showChart() {
                     links: edge,
                     categories: categories.map((i) => ({ name: i })),
                     label: {
+                        show: true,
                         position: "right",
                         formatter: "{b}",
+                        textBorderColor: "none",
                     },
                     roam: true,
                     labelLayout: {
@@ -196,8 +206,9 @@ function showChart() {
                     },
                     lineStyle: {
                         color: "source",
+                        opacity: 0.5,
                         curveness: 0.1,
-                        width: 0.1,
+                        width: 0.5,
                     },
                 },
             ],
