@@ -220,6 +220,13 @@ function showChart() {
     );
 }
 
+function jumpToID(id: string) {
+    const { x, y } = n.find((i) => i.id === id);
+    const op = myChart.getOption();
+    op["series"][0].center = [x, y];
+    myChart.setOption(op, true);
+}
+
 show("zh-HANS");
 
 myChart.on("click", (e) => {
@@ -230,7 +237,26 @@ const wikiEl = el("div");
 document.body.append(wikiEl);
 
 function showWiki(id: string) {
-    wikiEl.innerText = "";
     const name = n.find((i) => i.id === id).name;
+    const from = data[id];
+    const to: string[] = [];
+    for (let i in data) {
+        if (data[i].includes(id)) {
+            to.push(i);
+        }
+    }
+
+    wikiEl.innerText = "";
     wikiEl.append(el("h2", name), el("p", id));
+
+    const fromEl = el("ul");
+    const toEl = el("ul");
+    for (let i of from) {
+        fromEl.append(el("li", i, { onclick: () => jumpToID(i) }));
+    }
+    for (let i of to) {
+        toEl.append(el("li", i, { onclick: () => jumpToID(i) }));
+    }
+
+    wikiEl.append(fromEl, toEl);
 }
