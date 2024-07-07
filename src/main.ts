@@ -266,6 +266,28 @@ function addPath(id: string) {
     pathI = path.length - 1;
 }
 
+function wikiSearch(o: (typeof wikiE)[0], name: string, id: string) {
+    return el("a", o.name, { target: "_blank", href: o.url.replace("%s", o.map ? o.map(name, id) : "") });
+}
+
+const wikiE: { url: string; name: string; lan?: string; map?: (name: string, id: string) => string }[] = [
+    {
+        url: "https://leanprover-community.github.io/mathlib4_docs/Mathlib/%s.html",
+        name: "community",
+        map: (n, id) => id.split(".").join("/"),
+    },
+    {
+        url: "https://bing.com/search?q=%s",
+        name: "bing",
+        map: (n, id) => n.split(".").join(" "),
+    },
+    {
+        url: "https://bing.com/search?q=%s",
+        name: "bing src",
+        map: (n, id) => id.split(".").join(" "),
+    },
+];
+
 function showWiki(id: string) {
     wikiEl.innerText = "";
     if (id) {
@@ -323,6 +345,13 @@ function showWiki(id: string) {
         el("h2", name, { style: { color: c[id.split(".")[0]].color }, onclick: () => jumpToID(id) }),
         el("p", el("a", id, { href: `${mathlibPath}/${id.replaceAll(".", "/")}.lean`, target: "_blank" }))
     );
+
+    const searchE = el("div", { class: "searchList" });
+    for (let i of wikiE) {
+        searchE.append(wikiSearch(i, name, id));
+    }
+
+    wikiEl.append(searchE);
 
     const fromEl = el("ul");
     const toEl = el("ul");
