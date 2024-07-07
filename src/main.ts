@@ -136,7 +136,7 @@ const n = nodes.map((i) => {
         name: i,
         symbolSize: 1 * v,
         value: v,
-        x: (nodesss.indexOf(i) / nodesss.length) * 800,
+        x: (nodesss.indexOf(i) / nodesss.length) * 1000,
         y: c[x].y * 600 + v * Math.random(),
         category: categories.indexOf(x),
     };
@@ -225,19 +225,35 @@ function jumpToID(id: string) {
     const op = myChart.getOption();
     op["series"][0].center = [x, y];
     myChart.setOption(op, true);
+
+    showWiki(id);
 }
 
 show("zh-HANS");
 
 myChart.on("click", (e) => {
-    if (e.dataType === "node") showWiki(e.data["id"]);
-    else showWiki(""); // todo 点击画布
+    if (e.dataType === "node") {
+        showWiki(e.data["id"]);
+        addPath(e.data["id"]);
+    } else showWiki(""); // todo 点击画布
 });
 
 const wikiEl = el("div", { class: "wiki" });
 document.body.append(wikiEl);
 
 const mathlibPath = "https://github.com/leanprover-community/mathlib4/tree/nightly-testing-2024-07-05/Mathlib";
+
+const path: string[] = [];
+let pathI = -1;
+
+function addPath(id: string) {
+    if (pathI != path.length - 1) {
+        path.push(path[pathI]);
+    }
+
+    path.push(id);
+    pathI = path.length - 1;
+}
 
 function showWiki(id: string) {
     wikiEl.innerText = "";
@@ -253,6 +269,26 @@ function showWiki(id: string) {
     }
 
     wikiEl.append(
+        el(
+            "div",
+            el("button", "<", {
+                onclick: () => {
+                    pathI--;
+                    pathI = Math.max(0, pathI);
+                    jumpToID(path[pathI]);
+                },
+            }),
+            el("button", ">", {
+                onclick: () => {
+                    pathI++;
+                    pathI = Math.min(path.length - 1, pathI);
+                    jumpToID(path[pathI]);
+                },
+            })
+        )
+    );
+
+    wikiEl.append(
         el("h2", name, { style: { color: c[id.split(".")[0]].color } }),
         el("p", el("a", id, { href: `${mathlibPath}/${id.replaceAll(".", "/")}.lean`, target: "_blank" }))
     );
@@ -264,8 +300,8 @@ function showWiki(id: string) {
             title: i,
             style: { color: c[i.split(".")[0]].color },
             onclick: () => {
-                showWiki(i);
                 jumpToID(i);
+                addPath(i);
             },
         });
     }
