@@ -13,12 +13,27 @@ body {
     background-color: #0008;
     color: #fff;
     backdrop-filter: blur(20px);
-    & button {
-        border: none;
-        background: #eee;
-        border-radius: 4px;
+    & > :first-child {
+        gap: 4px;
+        display: flex;
+        & > * {
+            border: none;
+            background: #555;
+            color: #fff;
+            border-radius: 4px;
+        }
     }
     & a {
         color: #fff;
+    }
+    & .search {
+        position: absolute;
+        overflow-y: scroll;
+        height: 400px;
+        background-color: #0008;
+        backdrop-filter: blur(20px);
+        left: 0;
+        list-style: none;
+        padding: 1rem;
     }
 }

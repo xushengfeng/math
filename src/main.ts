@@ -4,6 +4,7 @@ import * as echarts from "echarts/core";
 import { TitleComponent, TooltipComponent, LegendComponent } from "echarts/components";
 import { GraphChart } from "echarts/charts";
 import { CanvasRenderer } from "echarts/renderers";
+import Fuse, { FuseResultMatch } from "fuse.js";
 
 echarts.use([TitleComponent, TooltipComponent, LegendComponent, GraphChart, CanvasRenderer]);
 
@@ -163,6 +164,8 @@ function show(lan: string) {
         });
 }
 
+let fuse: Fuse<(typeof n)[0]>;
+
 function showChart() {
     myChart.hideLoading();
     myChart.setOption(
@@ -218,6 +221,14 @@ function showChart() {
         },
         true
     );
+
+    fuse = new Fuse(n, {
+        includeMatches: true,
+        findAllMatches: true,
+        useExtendedSearch: true,
+        includeScore: true,
+        keys: ["name", "id"],
+    });
 }
 
 function jumpToID(id: string) {
@@ -268,6 +279,8 @@ function showWiki(id: string) {
         }
     }
 
+    const searchEl = el("ul", { class: "search", style: { display: "none" } });
+
     wikiEl.append(
         el(
             "div",
@@ -284,12 +297,25 @@ function showWiki(id: string) {
                     pathI = Math.min(path.length - 1, pathI);
                     jumpToID(path[pathI]);
                 },
-            })
+            }),
+            el("input", {
+                oninput: (e: InputEvent) => {
+                    const r = fuse.search((e.currentTarget as HTMLInputElement).value);
+                    console.log(r);
+                    searchEl.innerHTML = "";
+                    if (!r.length) searchEl.style.display = "none";
+                    else searchEl.style.display = "";
+                    for (let i of r) {
+                        searchEl.append(li(i.item.id));
+                    }
+                },
+            }),
+            searchEl
         )
     );
 
     wikiEl.append(
-        el("h2", name, { style: { color: c[id.split(".")[0]].color } }),
+        el("h2", name, { style: { color: c[id.split(".")[0]].color }, onclick: () => jumpToID(id) }),
         el("p", el("a", id, { href: `${mathlibPath}/${id.replaceAll(".", "/")}.lean`, target: "_blank" }))
     );
 
