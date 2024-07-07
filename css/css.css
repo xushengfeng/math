@@ -1,0 +1,19 @@
+body {
+    margin: 0;
+    background-color: #000;
+    overflow: hidden;
+}
+
+.wiki {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    padding: 1rem;
+    background-color: #0008;
+    color: #fff;
+    backdrop-filter: blur(20px);
+    & a {
+        color: #fff;
+    }
+}

@@ -9,8 +9,8 @@ echarts.use([TitleComponent, TooltipComponent, LegendComponent, GraphChart, Canv
 
 const main = el("div") as HTMLElement;
 document.body.append(main);
-main.style.width = "800px";
-main.style.height = "600px";
+main.style.width = "100vw";
+main.style.height = "100vh";
 
 var myChart = echarts.init(main, "dark");
 
@@ -231,12 +231,18 @@ show("zh-HANS");
 
 myChart.on("click", (e) => {
     if (e.dataType === "node") showWiki(e.data["id"]);
+    else showWiki(""); // todo 点击画布
 });
 
-const wikiEl = el("div");
+const wikiEl = el("div", { class: "wiki" });
 document.body.append(wikiEl);
 
+const mathlibPath = "https://github.com/leanprover-community/mathlib4/tree/nightly-testing-2024-07-05/Mathlib";
+
 function showWiki(id: string) {
+    wikiEl.innerText = "";
+    if (!id) return;
+
     const name = n.find((i) => i.id === id).name;
     const from = data[id];
     const to: string[] = [];
@@ -246,17 +252,29 @@ function showWiki(id: string) {
         }
     }
 
-    wikiEl.innerText = "";
-    wikiEl.append(el("h2", name), el("p", id));
+    wikiEl.append(
+        el("h2", name, { style: { color: c[id.split(".")[0]].color } }),
+        el("p", el("a", id, { href: `${mathlibPath}/${id.replaceAll(".", "/")}.lean`, target: "_blank" }))
+    );
 
     const fromEl = el("ul");
     const toEl = el("ul");
-    for (let i of from) {
-        fromEl.append(el("li", i, { onclick: () => jumpToID(i) }));
+    function li(i: string) {
+        return el("li", n.find((x) => i === x.id).name, {
+            title: i,
+            style: { color: c[i.split(".")[0]].color },
+            onclick: () => {
+                showWiki(i);
+                jumpToID(i);
+            },
+        });
     }
-    for (let i of to) {
-        toEl.append(el("li", i, { onclick: () => jumpToID(i) }));
+    for (let i of from.toSorted()) {
+        fromEl.append(li(i));
+    }
+    for (let i of to.toSorted()) {
+        toEl.append(li(i));
     }
 
-    wikiEl.append(fromEl, toEl);
+    wikiEl.append(el("div", fromEl, toEl));
 }
