@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const mathLibPath = "/home/xsf/Project/mathlib4/Mathlib/";
+const mathLibPath = path.join(process.argv[2] || path.join(__dirname, "mathlib4"), "./Mathlib/");
 
 let json = {};
 /** @type string */
