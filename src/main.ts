@@ -268,7 +268,12 @@ function addPath(id: string) {
 
 function showWiki(id: string) {
     wikiEl.innerText = "";
-    if (!id) return;
+    if (id) {
+        wikiEl.style.display = "";
+    } else {
+        wikiEl.style.display = "none";
+        return;
+    }
 
     const name = n.find((i) => i.id === id).name;
     const from = data[id];
